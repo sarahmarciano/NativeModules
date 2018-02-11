@@ -5,7 +5,8 @@ import {
   Text,
   View,
   Image,
-  FlatList
+  FlatList,
+  DeviceEventEmitter
 } from 'react-native';
 
 const ContactsManager = NativeModules.ContactsManager;
@@ -17,8 +18,13 @@ export default class App extends Component {
     this.state = { contacts: [] };
   }
   componentWillMount() {
-    ContactsManager.getContacts((res) => this.setState({ contacts: res.replace('[', '').replace(']', '').split(',') }));
+    ContactsManager.getContacts();
+    DeviceEventEmitter.addListener('aaa', function (e) {
+      this.setState({ contacts: [...this.state.contacts, e] });
+    }.bind(this));
   }
+
+
   renderItem(contact) {
     const data = contact.split('*');
     const { itemStyle, textStyle, imageStyle } = styles;
